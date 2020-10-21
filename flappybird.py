@@ -45,21 +45,22 @@ def draw_floor():
 def create_pipe():
     random_pipe=random.choice(pipe_height)
     bottom=pipe_surface.get_rect(midtop=(288,random_pipe))
-    top=pipe_surface.get_rect(midbottom=(288,random_pipe-400))
+    top=pipe_surface.get_rect(midbottom=(288,random_pipe-200))
     return bottom,top
    
 def move_pipes(pipes):
     global score,pipe_list
     for pipe in pipes:
         pipe.centerx-=5
-            
-        # if bird_rect.centerx<pipe.centerx+32 and bird_rect.x>pipe.x-32:
-        #     score+=1
+    
+    return pipes
+
+def point(pipes):
+    global score,pipe_list
+    for pipe in pipes:
         if pipe.centerx<0 and pipe.centerx>-3:
             score+=1
             pipe_list.remove(pipe_list[pipe_list.index(pipe)])
-            
-    return pipes
 
 def draw_pipes(pipes): 
     for pipe in pipes:
@@ -88,7 +89,7 @@ def rotated_bird(bird):
     return new_bird
 
 def show_score():
-    scoreing=text.render(f'{int(score/2)}',True,(0,0,0))
+    scoreing=text.render(f'{int(score)}',True,(0,0,0))
     screen.blit(scoreing,(100,100))
     
 def game_over():
@@ -97,9 +98,9 @@ def game_over():
     
     with open(filename) as fob:
         highest=json.load(fob)['h']
-        
+
     game_over_text=text.render(f'Highest score {highest}',True,(0,0,255))
-    screen.blit(game_over_text,(0,100))
+    screen.blit(game_over_text,(50,200))
 
 def high_score():
     filename='ss.json'
@@ -108,7 +109,7 @@ def high_score():
         with open(filename) as fob:
             high_score=json.load(fob)['h']
         if score>high_score:
-            dict1['h']=int(score/2)
+            dict1['h']=score
             with open(filename,'w') as fob:
                 json.dump(dict1,fob)
     except:
@@ -164,6 +165,7 @@ while True:
         """show score"""
         show_score()
         check_collision(pipe_list)
+        point(pipe_list)
     
     if not running:
         game_over()
