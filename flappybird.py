@@ -94,22 +94,26 @@ def show_score():
 def game_over():
     high_score()
     filename='ss.json'
-    highest=open(filename).read()
-    highest=int(''.join(i for i in highest if i.isdigit()))
+    
+    with open(filename) as fob:
+        highest=json.load(fob)['h']
+        
     game_over_text=text.render(f'Highest score {highest}',True,(0,0,255))
     screen.blit(game_over_text,(0,100))
 
 def high_score():
     filename='ss.json'
+    dict1={'h':0}
     try:
-        high_score=open(filename).read()
-        high_score=int(''.join(i for i in high_score if i.isdigit()))
+        with open(filename) as fob:
+            high_score=json.load(fob)['h']
         if score>high_score:
+            dict1['h']=int(score/2)
             with open(filename,'w') as fob:
-                json.dump(str(int(score/2)),fob)
+                json.dump(dict1,fob)
     except:
         with open(filename,'w') as fob:
-            json.dump(str(score),fob)
+            json.dump(dict1,fob)
 
 running=True
 while True:
@@ -148,8 +152,6 @@ while True:
         sd_bird=rotated_bird(bird_surface)
         bird_rect.y+=bird_move
         screen.blit(sd_bird,bird_rect)
-    
-        # screen.blit(bird_surface,(bird_pos_x,bird_pos_y))
 
         """pipe"""
         pipe_list=move_pipes(pipe_list)
